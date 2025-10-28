@@ -31,3 +31,8 @@ export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
 $ cp .env.example .env
 ```
 Set your environment variables in the `.env` file. Like `OPENAI_API_KEY` value.
+
+## Run Fast api server
+```bash
+uvicorn main:app --reload  --host 0.0.0.0 --port 5000
+```
