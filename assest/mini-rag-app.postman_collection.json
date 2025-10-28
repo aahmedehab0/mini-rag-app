@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "157f4dba-d737-4c3f-8b57-f01df2628865",
+		"name": "mini-rag-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48649472",
+		"_collection_link": "https://aehababdelaziz-4424790.postman.co/workspace/ahmed-Ehab-Abdelaziz's-Workspac~960cbfbb-3340-47a0-8ef5-7dd115cf0ee3/collection/48649472-157f4dba-d737-4c3f-8b57-f01df2628865?action=share&source=collection_link&creator=48649472"
+	},
+	"item": [
+		{
+			"name": "welcome-request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}welcome",
+					"host": [
+						"{{api}}welcome"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "?api=http://127.0.0.1:5000",
+					"query": [
+						{
+							"key": "api",
+							"value": "http://127.0.0.1:5000"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api",
+			"value": "http://127.0.0.1:8000/"
+		}
+	]
+}
