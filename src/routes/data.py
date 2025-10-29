@@ -1,7 +1,9 @@
-from fastapi import APIRouter ,Depends,UploadFile
+from fastapi import APIRouter ,Depends,UploadFile,status
+from fastapi.responses import JSONResponse
 import os
 from helpers.confog import get_sttings,Settings
-from controllers import DataController
+from controllers import DataController,ProjectController
+
 
 data_router = APIRouter(prefix= '/api/v1/data',
                         tags = ["api_v1" ,"data"])
@@ -13,4 +15,12 @@ async def upload_data(projrct_id:str  , file :UploadFile,
     
 
     is_valid, result_signal  = DataController().validate_upload_file(file = file)
-    return result_signal
+    if not is_valid:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content = {
+                "signal" : result_signal
+            }
+        )
+    project_dir_path = os.path.join(ProjectController.get_project_path(projrct_id))
+    
