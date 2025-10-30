@@ -1,10 +1,11 @@
 from fastapi import  APIRouter, Depends, UploadFile, status
 from fastapi.responses import JSONResponse
-from helpers.confog import get_setings , Settings
+from helpers.confog import get_setings ,Settings
 from controllers import DataController
 import aiofiles
 from models import ResponseSignal
 import logging
+from schemes import ProcessRequest
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -57,3 +58,10 @@ async def upload_data(project_id: str, file: UploadFile,
                 "file_id": file_id
             }
         )
+
+@data_router.post("/procrss/{project_id}")
+
+async def process_endpoint (project_id: str , process_request :ProcessRequest ):
+
+    file_id = process_request.file_id
+    return file_id
