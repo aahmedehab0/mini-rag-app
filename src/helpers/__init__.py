@@ -1,0 +1,1 @@
+from .confog import get_setings
