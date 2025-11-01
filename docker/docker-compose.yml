@@ -11,6 +11,10 @@ services:
     volumes:
       - ./mongodb:/data/db
 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME="ahmed_ehab"
+      - MONGO_INITDB_ROOT_PASSWORD="191099"
+
     networks: 
       - backend
     
