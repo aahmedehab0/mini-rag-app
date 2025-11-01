@@ -1,16 +1,17 @@
 from .BaseDataModel import BaseDataModel
-from enums.DataBaseEnums import DataBaseEnum
-from db_schemes import Project
+from .enums import DataBaseEnum
+from .db_schemes import Project
+
 
 class ProjectModel (BaseDataModel):
     def __init__(self, db_client : object):
         super().__init__(db_client = db_client)
         self.collection = self.db_client [DataBaseEnum.COLLECTION_PROJECT_NAME.value]
 
-    async def crate_projrct (self , Project : Project):
-        result = await self.collection.insert_one (Project.model_dump())
-        Project._id = result.inserted_id
-        return Project
+    async def crate_projrct (self , project : Project):
+        result = await self.collection.insert_one (project.model_dump(by_alias= True ,exclude_unset=True))
+        project._id = result.inserted_id
+        return project
     
     async def get_project_or_create_one (self ,project_id : str):
         record = await self.collection.find_one ({
@@ -18,11 +19,12 @@ class ProjectModel (BaseDataModel):
         })
 
         if record is None:
-            Project = Project (project_id = project_id )
-            Project = await self.crate_projrct(Project = Project)
-            return Project
+            project = Project (project_id = project_id )
+            project = await self.crate_projrct(project = project)
+            return project
         
-        return Project (**record)
+        return Project(**record)
+        
     
     async def get_all_pages(self , page :int = 1 , page_szie :int = 10):
 
@@ -37,3 +39,5 @@ class ProjectModel (BaseDataModel):
                 Project (**document)
                 )
         return projects , total_pages
+
+    

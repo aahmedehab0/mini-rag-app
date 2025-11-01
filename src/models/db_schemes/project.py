@@ -3,10 +3,11 @@ from typing import Optional
 from bson.objectid import ObjectId
 
 class Project (BaseModel):
-    _id : Optional[ObjectId]
+    id : Optional[ObjectId] =Field(None , alias= "_id")
     project_id : str = Field(...,min_length=1)
 
-    @field_validator (project_id)                        #design your own validator
+    @field_validator("project_id")                  #design your own validator
+    @classmethod                       
     def validator_project_id (cls , value):
         if not value.isalnum():
             raise ValueError('project_id must be alphanumeric')

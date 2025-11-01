@@ -1,6 +1,4 @@
 from helpers import get_setings , Settings
-from db_schemes import data_chunk
-from enums.DataBaseEnums import DataBaseEnum
 
 class BaseDataModel :
     def __init__(self , db_client:object):
