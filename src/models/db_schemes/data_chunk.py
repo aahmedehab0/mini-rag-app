@@ -11,3 +11,14 @@ class DataChunk (BaseModel):
     chunk_project_id : ObjectId
     class Config:
         arbitrary_types_allowed = True              #don't raise error if you see unsuported variable
+
+    @classmethod
+    def get_indexes (cls):
+        return [{
+            "key":
+            [
+                ("chunk_project_id" , 1)
+            ],
+            "name" : "chunk_Project_id_index_1",
+            "unique": False,
+        }]
