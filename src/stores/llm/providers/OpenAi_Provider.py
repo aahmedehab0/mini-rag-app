@@ -1,10 +1,10 @@
-from llm import LLMInterface           #class have the construct of any provider
-from LLMEnums import  OpenAIEnums      # some fixed texts
-from openai import OpenAI              #open ai library
+from .. import  LLMInterface                       #class have the construct of any provider
+from .. import  OpenAIEnums                        # some fixed texts
+from openai import OpenAI                          #open ai library
 
 import logging
 
-class OpenAiProvider (LLMInterface):
+class OpenAIProvider (LLMInterface):
     def __init__(self, api_key: str, api_url: str=None,
                        default_input_max_characters: int=1000,
                        default_generation_max_output_tokens: int=1000,
@@ -30,7 +30,7 @@ class OpenAiProvider (LLMInterface):
         #client for open ai (object who can connect to API)
         self.client = OpenAI(
             api_key = self.api_key,
-            api_url = self.api_url
+            base_url = self.api_url
         )
         #logger in logs with this class name
         self.logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ class OpenAiProvider (LLMInterface):
     def process_text(self, text: str):
         return text[:self.default_input_max_characters].strip()
     
-    # process tp validate dict output and return it
+    # process to validate dict output and return it
     def generate_text(self, prompt: str, chat_history: list=[], max_output_tokens: int=None,
                             temperature: float = None):
         
