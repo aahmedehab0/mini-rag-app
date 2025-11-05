@@ -1,3 +1,3 @@
-from .LLM_Enums import LLMEnums , OpenAIEnums , CoHereEnums , DocumentTypeEnum
-from .LLM_interface import LLMInterface
-from .LLM_Provider_Factory import LLMProviderFactory
+from .Vectordb_interface import VectorDBInterface
+from .vectordb_enums import DistanceMethodEnums , VectorDBEnums
+from .vectordb_provider_factory import VectorDBProviderFactory
