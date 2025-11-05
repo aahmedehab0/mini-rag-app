@@ -1,4 +1,4 @@
-from .BaseDataModel import BaseDataModel
+from .base_data_model import BaseDataModel
 from .enums import DataBaseEnum
 from .db_schemes import Asset
 from bson import ObjectId

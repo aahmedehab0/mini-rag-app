@@ -1,3 +1,3 @@
-from .ProjectModel import ProjectModel
-from .ChunkModel import ChunkModel
-from .AssetModel import AssetModel
+from .project_model import ProjectModel
+from .chunk_model import ChunkModel
+from .asset_model import AssetModel
