@@ -1,4 +1,4 @@
-from .LLM_Enums import LLMEnums                                   # Enum for cohere and openai strings
+from .llm_enums import LLMEnums                                   # Enum for cohere and openai strings
 from .providers import OpenAIProvider, CoHereProvider             # provider class definition
 
 class LLMProviderFactory:
