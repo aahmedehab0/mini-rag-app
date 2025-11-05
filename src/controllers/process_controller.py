@@ -1,5 +1,5 @@
-from .BaseController import BaseController
-from .ProjectController import ProjectController
+from .base_controller import BaseController
+from .project_controller import ProjectController
 from models.enums import ProcessingEnum
 from langchain_community.document_loaders import  TextLoader
 from langchain_community.document_loaders import PyMuPDFLoader
