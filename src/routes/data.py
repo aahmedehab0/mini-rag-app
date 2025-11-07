@@ -6,7 +6,7 @@ import os
 
 from helpers.confog import get_setings ,Settings
 from controllers import DataController,ProcessController
-from schemes import ProcessRequest
+from .schemes import ProcessRequest
 
 from models.enums import ResponseSignal , AssetTypeEnum
 from models.db_schemes import DataChunk , Asset

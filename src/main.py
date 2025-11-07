@@ -1,9 +1,10 @@
 from fastapi import FastAPI 
-from routes import base , data
+from routes import base , data ,nlp
 from motor.motor_asyncio import AsyncIOMotorClient
 from helpers import get_setings
 from contextlib import asynccontextmanager
 from stores.llm import LLMProviderFactory
+from stores.vectordb import VectorDBProviderFactory
 
 
 @asynccontextmanager
@@ -13,6 +14,7 @@ async def lifespan(app: FastAPI):
     app.db_client = app.mongo_conn [settings.MONGODB_DATABASE]  #define database
 
     llm_provider_factory = LLMProviderFactory(settings)        #get configs settings for llm provider
+    vectordb_provide_factory = VectorDBProviderFactory(settings)
 
     # generation client
     app.generation_client = llm_provider_factory.create(provider=settings.GENERATION_BACKEND)
@@ -22,15 +24,23 @@ async def lifespan(app: FastAPI):
     app.embedding_client = llm_provider_factory.create(provider=settings.EMBEDDING_BACKEND)
     app.embedding_client.set_embedding_model(model_id=settings.EMBEDDING_MODEL_ID,
                                              embedding_size=settings.EMBEDDING_MODEL_SIZE)
+    # vectordb client
+    app.vectordb_client = vectordb_provide_factory.create(
+        provider=settings.VECTOR_DB_BACKEND
+        )
+    app.vectordb_client.connect()
+
+    #span stop
     yield
     app.mongo_conn.close()
-
+    app.vectordb_client.disconnect()
 
 app = FastAPI(lifespan=lifespan )
 
 
 app.include_router(base.base_router)
 app.include_router (data.data_router)
+app.include_router(nlp.nlp_router)
 
 
 #uvicorn main:app --reload  --host 0.0.0.0 --port 5000
