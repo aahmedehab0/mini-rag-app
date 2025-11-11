@@ -101,6 +101,8 @@ async def get_project_index_info(request: Request, project_id: str):
         vectordb_client=request.app.vectordb_client,
         generation_client=request.app.generation_client,
         embedding_client=request.app.embedding_client,
+        template_parser=request.app.template_parser,
+        
     )
 
     collection_info = nlp_controller.get_vector_db_collection_info(project=project)
@@ -127,7 +129,7 @@ async def search_index(request: Request, project_id: str, search_request: Search
         vectordb_client=request.app.vectordb_client,
         generation_client=request.app.generation_client,
         embedding_client=request.app.embedding_client,
-        #template_parser=request.app.template_parser,
+        template_parser=request.app.template_parser,
     )
 
     results = nlp_controller.search_vector_db_collection(
