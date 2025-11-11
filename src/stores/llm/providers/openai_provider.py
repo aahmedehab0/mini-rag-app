@@ -27,11 +27,15 @@ class OpenAIProvider (LLMInterface):
         #embeding size (dimensions of vector it fixed for model but should be passed)
         self.embedding_size = None
 
+
         #client for open ai (object who can connect to API)
         self.client = OpenAI(
             api_key = self.api_key,
-            base_url = self.api_url
+            base_url =  self.api_url if self.api_url and len(self.api_url) else None
         )
+
+        self.enums = OpenAIEnums
+
         #logger in logs with this class name
         self.logger = logging.getLogger(__name__)
 
@@ -80,7 +84,7 @@ class OpenAIProvider (LLMInterface):
             self.logger.error("Error while generating text with OpenAI")
             return None
         # return output text 
-        return response.choices[0].message["content"]
+        return response.choices[0].message.content
 
     #embeding input user
     def embed_text(self, text: str, document_type: str = None):

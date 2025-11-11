@@ -3,6 +3,7 @@ from .. import VectorDBInterface               #interface for any vector databas
 from .. import DistanceMethodEnums             #some fixed texts related to search database
 import logging                                 
 from typing import List                        #list type
+from models.db_schemes import RetrievedDocument
 
 class QdrantDBProvider(VectorDBInterface):
 
@@ -191,8 +192,19 @@ class QdrantDBProvider(VectorDBInterface):
             list (collections): vectors have most similarity for input vector
         """    
 
-        return self.client.search(
-            collection_name=collection_name,
-            query_vector=vector,
-            limit=limit
+        results = self.client.search(
+        collection_name=collection_name,
+        query_vector=vector,
+        limit=limit
         )
+
+        if not results or len(results) == 0:
+            return None
+        
+        return [
+            RetrievedDocument(**{
+                "score": result.score,
+                "text": result.payload["text"],
+            })
+            for result in results
+        ]
