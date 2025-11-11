@@ -5,15 +5,21 @@ from helpers import get_setings
 from contextlib import asynccontextmanager
 from stores.llm import LLMProviderFactory
 from stores.vectordb import VectorDBProviderFactory
+from stores.llm.templates import TemplateParser
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    #define copy of .env variables
     settings = get_setings()
-    app.mongo_conn = AsyncIOMotorClient(settings.MONGODB_URL)  #define clent
-    app.db_client = app.mongo_conn [settings.MONGODB_DATABASE]  #define database
 
-    llm_provider_factory = LLMProviderFactory(settings)        #get configs settings for llm provider
+    #define mongo connection
+    app.mongo_conn = AsyncIOMotorClient(settings.MONGODB_URL)  
+    #define mongo database
+    app.db_client = app.mongo_conn [settings.MONGODB_DATABASE]  
+
+    #get configs settings for llm provider
+    llm_provider_factory = LLMProviderFactory(settings)        
     vectordb_provide_factory = VectorDBProviderFactory(settings)
 
     # generation client
@@ -29,6 +35,11 @@ async def lifespan(app: FastAPI):
         provider=settings.VECTOR_DB_BACKEND
         )
     app.vectordb_client.connect()
+
+    app.template_parser = TemplateParser(
+        language=settings.PRIMARY_LANG,
+        default_language=settings.DEFAULT_LANG,
+    )
 
     #span stop
     yield
