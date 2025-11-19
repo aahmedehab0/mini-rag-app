@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
 
     #get configs settings for llm provider
     llm_provider_factory = LLMProviderFactory(settings)        
-    vectordb_provide_factory = VectorDBProviderFactory(settings)
+    vectordb_provide_factory = VectorDBProviderFactory(config = settings , db_client=app.db_client)
 
     # generation client
     app.generation_client = llm_provider_factory.create(provider=settings.GENERATION_BACKEND)
@@ -40,7 +40,7 @@ async def lifespan(app: FastAPI):
     app.vectordb_client = vectordb_provide_factory.create(
         provider=settings.VECTOR_DB_BACKEND
         )
-    app.vectordb_client.connect()
+    await  app.vectordb_client.connect()
 
     app.template_parser = TemplateParser(
         language=settings.PRIMARY_LANG,
@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
     #span stop
     yield
     await app.db_engine.dispose()                      # close postgress connection
-    app.vectordb_client.disconnect()
+    await app.vectordb_client.disconnect()
 
 app = FastAPI(lifespan=lifespan )
 

@@ -7,12 +7,13 @@ from models.db_schemes import RetrievedDocument
 
 class QdrantDBProvider(VectorDBInterface):
 
-    def __init__(self, db_path: str, distance_method: str):
+    def __init__(self, db_client, default_vector_size: int = 384,
+                    distance_method: str = None, index_threshold: int=100):
 
         #client in database will defined in method
         self.client = None   
         #path of vectors where it stored          
-        self.db_path = db_path
+        self.db_client = db_client
         #distane typr for search
         self.distance_method = None
 
@@ -22,42 +23,43 @@ class QdrantDBProvider(VectorDBInterface):
         elif distance_method == DistanceMethodEnums.DOT.value:
             self.distance_method = models.Distance.DOT
             
-        #logger in logs with this class name
-        self.logger = logging.getLogger(__name__)
+        self.default_vector_size = default_vector_size   
+        #logger in logs with uvicorn
+        self.logger = logging.getLogger("uvicorn")
 
 
-    def connect(self):
+    async def connect(self):
         # Initialize a Qdrant client that connects to the local database stored at the given file path.
         # The 'path' parameter tells Qdrant to use a local (on-disk) instance instead of a remote server.
-        self.client = QdrantClient(path=self.db_path)
+        self.client = QdrantClient(path=self.db_client)
 
-    def disconnect(self):
+    async def disconnect(self):
         #remove client to stop Qdrant
         self.client = None
 
-    def is_collection_existed(self, collection_name: str) -> bool:
+    async def is_collection_existed(self, collection_name: str) -> bool:
         # Check if a collection with the given name already exists in the Qdrant database.
         # Returns True if the collection exists, otherwise False.
         return self.client.collection_exists(collection_name=collection_name)
     
-    def list_all_collections(self) -> List:
+    async def list_all_collections(self) -> List:
         # Retrieve and return a list of all collections stored in the Qdrant database.
         # Each collection represents a separate group of vectors and metadata.
         return self.client.get_collections()
     
-    def get_collection_info(self, collection_name: str) -> dict:
+    async def get_collection_info(self, collection_name: str) -> dict:
         # Get detailed information about a specific collection in the Qdrant database.
         # This includes metadata such as vector size, distance metric, and configuration details.
         return self.client.get_collection(collection_name=collection_name)
 
     
-    def delete_collection(self, collection_name: str):
+    async def delete_collection(self, collection_name: str):
         #delete collection from Qdrant database.
         #check first if collection exist or not
         if self.is_collection_existed(collection_name):
             return self.client.delete_collection(collection_name=collection_name)
         
-    def create_collection(self, collection_name: str, 
+    async def create_collection(self, collection_name: str, 
                                 embedding_size: int,
                                 do_reset: bool = False):
         """
@@ -88,7 +90,7 @@ class QdrantDBProvider(VectorDBInterface):
         
         return False
     
-    def insert_one(self, collection_name: str, text: str, vector: list,
+    async def insert_one(self, collection_name: str, text: str, vector: list,
                          metadata: dict = None, 
                          record_id: str = None):
         """
@@ -127,7 +129,7 @@ class QdrantDBProvider(VectorDBInterface):
 
         return True
     
-    def insert_many(self, collection_name: str, texts: list, 
+    async def insert_many(self, collection_name: str, texts: list, 
                           vectors: list, metadata: list = None, 
                           record_ids: list = None, batch_size: int = 50):
         """
@@ -180,7 +182,7 @@ class QdrantDBProvider(VectorDBInterface):
 
         return True
         
-    def search_by_vector(self, collection_name: str, vector: list, limit: int = 5):
+    async def search_by_vector(self, collection_name: str, vector: list, limit: int = 5):
         """
         search for vector and similarity vector collection and return (limit) vectors .
         

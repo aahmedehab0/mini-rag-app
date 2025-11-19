@@ -1,6 +1,7 @@
 from .. import  LLMInterface                       #class have the construct of any provider
 from .. import  OpenAIEnums                        # some fixed texts
 from openai import OpenAI                          #open ai library
+from typing import List , Union
 
 import logging
 
@@ -72,6 +73,7 @@ class OpenAIProvider (LLMInterface):
         chat_history.append(
             self.construct_prompt(prompt=prompt, role=OpenAIEnums.USER.value)
         )
+
         # response of output text
         response = self.client.chat.completions.create(
             model = self.generation_model_id,
@@ -87,7 +89,7 @@ class OpenAIProvider (LLMInterface):
         return response.choices[0].message.content
 
     #embeding input user
-    def embed_text(self, text: str, document_type: str = None):
+    def embed_text(self, text: Union[str , List[str]], document_type: str = None):
         
         if not self.client:                                          # validate if client not defined
             self.logger.error("OpenAI client was not set")
@@ -97,8 +99,11 @@ class OpenAIProvider (LLMInterface):
             self.logger.error("Embedding model for OpenAI was not set")
             return None
         
+        if isinstance(text, str):
+            text = [text]
+        
         # embeding response
-        response = self.client.embeddings.create(                   
+        response = self.client.embeddings.create(
             model = self.embedding_model_id,
             input = text,
         )
@@ -107,7 +112,7 @@ class OpenAIProvider (LLMInterface):
             self.logger.error("Error while embedding text with OpenAI")
             return None
 
-        return response.data[0].embedding
+        return [ rec.embedding for rec in response.data ]
     # convert promt into dict (promt must be dict)
     def construct_prompt(self, prompt: str, role: str):
         return {

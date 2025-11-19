@@ -5,12 +5,13 @@ import logging
 import os
 
 from helpers.confog import get_setings ,Settings
-from controllers import DataController,ProcessController
+from controllers import DataController,ProcessController ,NLPController
 from .schemes import ProcessRequest
 
 from models.enums import ResponseSignal , AssetTypeEnum
 from models.db_schemes import DataChunk , Asset
 from models import ProjectModel ,ChunkModel , AssetModel
+
 
 
 
@@ -100,6 +101,13 @@ async def process_endpoint (request :Request , project_id: int , process_request
         project_id=project_id
     )
 
+    nlp_controller =  NLPController(
+        vectordb_client=request.app.vectordb_client,
+        generation_client=request.app.generation_client,
+        embedding_client=request.app.embedding_client,
+        template_parser=request.app.template_parser,
+    )
+
     asset_model = await AssetModel.create_instance(                 
             db_client=request.app.db_client
         )
@@ -153,8 +161,12 @@ async def process_endpoint (request :Request , project_id: int , process_request
                     )
 
     if do_reset == 1:                                                  #if reset= 1 delete all files from project
+
+        collection_name = nlp_controller.create_collection_name(project_id=project.project_id)
+        _ = await request.app.vectordb_client.delete_collection(collection_name=collection_name)       
+
         _ = await chunk_model.delete_chunks_by_project_id(
-            project_id=project.project_id
+        project_id=project.project_id
         )
 
     for asset_id, file_id in project_files_ids.items():                 #loop all files 
