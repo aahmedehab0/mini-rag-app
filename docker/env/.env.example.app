@@ -7,7 +7,7 @@ FILE_DEFAULT_CHUNK_SIZE = 512000
 
 POSTGRES_USERNAME="postgres"
 POSTGRES_PASSWORD="PASSWORD"
-POSTGRES_HOST="localhost"
+POSTGRES_HOST="pgvector"
 POSTGRES_PORT=5432
 POSTGRES_MAIN_DATABASE="minirag"
 # ========================= LLM Config =========================

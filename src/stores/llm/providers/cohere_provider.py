@@ -1,7 +1,9 @@
 from .. import LLMInterface                                         #class have the construct of any provider
 from .. import CoHereEnums , DocumentTypeEnum                       # some fixed texts
+
 import cohere
 import logging
+from typing import List , Union
 
 class CoHereProvider(LLMInterface):               
 
@@ -87,7 +89,7 @@ class CoHereProvider(LLMInterface):
         # return output text 
         return response.text
     
-    def embed_text(self, text: str, document_type: str = None):
+    def embed_text(self, text: Union[str , List[str]], document_type: str = None):
         """
         Generate embeddings for a given text using the current embedding model.
         
@@ -107,6 +109,9 @@ class CoHereProvider(LLMInterface):
             self.logger.error("Embedding model for CoHere was not set")
             return None
         
+        if isinstance(text , str):
+            text = [text]
+        
         #input type:  document or query (question from user)
         input_type = CoHereEnums.DOCUMENT
         if document_type == DocumentTypeEnum.QUERY:
@@ -115,22 +120,23 @@ class CoHereProvider(LLMInterface):
         # embeding response
         response = self.client.embed(
             model = self.embedding_model_id,
-            texts = [self.process_text(text)],
+            texts = [ self.process_text(t) for t in text ],
             input_type = input_type,
             embedding_types=['float'],
         )
+
         #validate embeding out if empty or have any missing
         if not response or not response.embeddings or not response.embeddings.float:
             self.logger.error("Error while embedding text with CoHere")
             return None
         
         # return embeding output
-        return response.embeddings.float[0]
+        return [ f for f in response.embeddings.float ]
     
      # convert promt into dict (promt must be dict)
     def construct_prompt(self, prompt: str, role: str):
         
         return {
             "role": role,
-            "text": self.process_text(prompt)
+            "text": prompt
         }

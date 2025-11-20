@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from typing import List
 load_dotenv()
 
 from pydantic_settings import BaseSettings , SettingsConfigDict
@@ -10,8 +11,12 @@ class Settings (BaseSettings):
     FILE_ALLOWED_TYPES: list
     FILE_MAX_SIZE: int
     FILE_DEFAULT_CHUNK_SIZE : int
-    MONGODB_DATABASE :str
-    MONGODB_URL: str
+
+    POSTGRES_USERNAME: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: int
+    POSTGRES_MAIN_DATABASE: str
 
     GENERATION_BACKEND :str = None
     EMBEDDING_BACKEND :str = None
@@ -27,9 +32,11 @@ class Settings (BaseSettings):
     GENERATION_DAFAULT_MAX_TOKENS: int = None
     GENERATION_DAFAULT_TEMPERATURE: float = None
 
+    VECTOR_DB_BACKEND_LITERAL : List[str] = None
     VECTOR_DB_BACKEND : str
     VECTOR_DB_PATH : str
     VECTOR_DB_DISTANCE_METHOD: str = None
+    VECTOR_DB_PGVEC_INDEX_THRESHOLD :int 
 
     PRIMARY_LANG: str = "en"
     DEFAULT_LANG: str = "en"
