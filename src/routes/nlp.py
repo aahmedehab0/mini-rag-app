@@ -8,6 +8,7 @@ from models import ProjectModel
 from models import ChunkModel
 from controllers import NLPController
 from models.enums import ResponseSignal
+from tasks.data_indexing import index_data_content
 
 
 logger = logging.getLogger('uvicorn.error')
@@ -19,6 +20,18 @@ nlp_router = APIRouter(
 
 @nlp_router.post("/index/push/{project_id}")
 async def index_project(request: Request, project_id: int, push_request: PushRequest):
+
+    task = index_data_content.delay(
+        project_id=project_id,
+        do_reset=push_request.do_reset
+    )
+
+    return JSONResponse(
+        content={
+            "signal": ResponseSignal.DATA_PUSH_TASK_READY.value,
+            "task_id": task.id
+        }
+    )
 
     project_model = await ProjectModel.create_instance(
         db_client=request.app.db_client
