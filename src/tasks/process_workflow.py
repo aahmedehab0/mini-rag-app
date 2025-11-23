@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
                 )
 def push_after_process_task(self, prev_task_result):
 
-    project_id = prev_task_result.get("project_id")
+    project_id = prev_task_result.get("project_id") 
     do_reset = prev_task_result.get("do_reset")
 
     task_results = asyncio.run(
